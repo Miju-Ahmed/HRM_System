@@ -3151,11 +3151,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/run/media/miju_chowdhury/Miju/Project/AIUB_HRM_System/hrms-api/hrms-api.csproj",
+      "projectUniqueName": "/run/media/miju_chowdhury/Miju/Project/HRM_System/hrms-api/hrms-api.csproj",
       "projectName": "hrms-api",
-      "projectPath": "/run/media/miju_chowdhury/Miju/Project/AIUB_HRM_System/hrms-api/hrms-api.csproj",
+      "projectPath": "/run/media/miju_chowdhury/Miju/Project/HRM_System/hrms-api/hrms-api.csproj",
       "packagesPath": "/home/miju_chowdhury/.nuget/packages/",
-      "outputPath": "/run/media/miju_chowdhury/Miju/Project/AIUB_HRM_System/hrms-api/obj/",
+      "outputPath": "/run/media/miju_chowdhury/Miju/Project/HRM_System/hrms-api/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/miju_chowdhury/.nuget/NuGet/NuGet.Config"
