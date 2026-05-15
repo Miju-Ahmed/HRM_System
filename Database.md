@@ -66,3 +66,30 @@ Upon application startup, the system automatically runs the following communicat
    * **Roles**: Creates default roles (Admin, HR, Employee).
    * **Admin User**: Creates a default system administrator account if none exists.
    * **Sample Data**: Seeds initial departments and designations to make the system usable immediately.
+
+## 6. Entity Relationship Diagram (ERD)
+
+The following graphical representation illustrates the communication and relationships between the different tables in the HRMS database:
+
+```mermaid
+erDiagram
+    %% Core Relationships
+    AppUser ||--o| Employee : "1:1 (EmployeeId)"
+    Employee ||--o| Salary : "1:1 (EmployeeId)"
+    
+    %% Organizational Hierarchy
+    Department ||--o{ Department : "1:N (ParentDepartmentId)"
+    Department ||--o{ Employee : "1:N (DepartmentId)"
+    Designation ||--o{ Employee : "1:N (DesignationId)"
+    
+    %% Attendance & Leaves
+    Employee ||--o{ Attendance : "1:N (EmployeeId)"
+    Employee ||--o{ Leave : "1:N (EmployeeId)"
+    LeaveType ||--o{ Leave : "1:N (LeaveTypeId)"
+    
+    %% Financials & Payroll
+    Employee ||--o{ Bonus : "1:N (EmployeeId)"
+    Employee ||--o{ Deduction : "1:N (EmployeeId)"
+    Employee ||--o{ SalaryRevision : "1:N (EmployeeId)"
+    Employee ||--o{ Payroll : "1:N (EmployeeId)"
+```
