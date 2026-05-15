@@ -213,3 +213,116 @@ This document contains a curated list of .NET and backend interview questions ta
 98. **What are Global Query Filters?**
 99. **What is a Connection String?**
 100. **How do you seed data in EF Core?**
+
+## 13. Written Test & Scenario-Based Questions (101-110)
+
+These questions are designed for a written test or whiteboard session to evaluate practical coding skills and problem-solving abilities.
+
+**101. Write a LINQ query to find the second highest salary from a `Salaries` table.**
+* **Expected Approach**: Understand how to order by descending and use `Skip(1)` and `Take(1)` or `FirstOrDefault()`.
+```csharp
+var secondHighestSalary = _context.Salaries
+                                  .OrderByDescending(s => s.Amount)
+                                  .Skip(1)
+                                  .FirstOrDefault();
+```
+
+**102. Find the Bug in the following ASP.NET Core Controller method:**
+```csharp
+[HttpGet]
+public async Task<IActionResult> GetEmployee(int id)
+{
+    var employee = _context.Employees.Find(id);
+    if (employee == null) return NotFound();
+    return Ok(employee);
+}
+```
+* **Expected Answer**: The method signature is `async Task<IActionResult>`, but the database call is synchronous (`Find` instead of `FindAsync`). This can block the thread. It should be `await _context.Employees.FindAsync(id);`.
+
+**103. Write a SQL query to list all Departments that have more than 5 employees.**
+* **Expected Answer**:
+```sql
+SELECT d.Name, COUNT(e.Id) as EmployeeCount
+FROM Departments d
+JOIN Employees e ON d.Id = e.DepartmentId
+GROUP BY d.Name
+HAVING COUNT(e.Id) > 5;
+```
+
+**104. Given an `Employee` entity with a navigation property to `Department`, write an EF Core query to load all Employees along with their Department name, filtering only those who are active.**
+* **Expected Answer**:
+```csharp
+var activeEmployees = await _context.Employees
+    .Include(e => e.Department)
+    .Where(e => e.IsActive) // Assuming IsActive exists, or !e.IsDeleted
+    .Select(e => new { e.Name, DepartmentName = e.Department.Name })
+    .ToListAsync();
+```
+
+**105. Explain what is wrong with the following C# code snippet and how to fix it:**
+```csharp
+public void ProcessData(List<string> items)
+{
+    foreach (var item in items)
+    {
+        if (item.StartsWith("A"))
+        {
+            items.Remove(item);
+        }
+    }
+}
+```
+* **Expected Answer**: Modifying a collection (`items.Remove`) while iterating through it with `foreach` will throw an `InvalidOperationException` (Collection was modified). Fix: Use a `for` loop backwards, or use `items.RemoveAll(i => i.StartsWith("A"));`.
+
+**106. Implement a thread-safe Singleton pattern in C#.**
+* **Expected Answer**: Using `Lazy<T>` is the modern and safest way.
+```csharp
+public sealed class Singleton
+{
+    private static readonly Lazy<Singleton> lazy = new Lazy<Singleton>(() => new Singleton());
+    public static Singleton Instance { get { return lazy.Value; } }
+    private Singleton() { }
+}
+```
+
+**107. Design a basic database schema (tables and relationships) for an Employee Attendance tracking system.**
+* **Expected Answer**: 
+  - `Employees` table (Id, Name, etc.)
+  - `AttendanceRecords` table (Id, EmployeeId, Date, CheckInTime, CheckOutTime, Status)
+  - Foreign key from `AttendanceRecords.EmployeeId` to `Employees.Id`.
+
+**108. What is the output of the following code?**
+```csharp
+string s1 = "hello";
+string s2 = s1;
+s1 += " world";
+Console.WriteLine(s2);
+```
+* **Expected Answer**: `hello`. Strings are immutable in C#. When `s1` is modified, a new string is created in memory, while `s2` still points to the original "hello".
+
+**109. Write a custom middleware in ASP.NET Core that logs the execution time of each HTTP request.**
+* **Expected Answer**:
+```csharp
+public class RequestTimingMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<RequestTimingMiddleware> _logger;
+
+    public RequestTimingMiddleware(RequestDelegate next, ILogger<RequestTimingMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var watch = Stopwatch.StartNew();
+        await _next(context);
+        watch.Stop();
+        _logger.LogInformation($"Request took {watch.ElapsedMilliseconds} ms");
+    }
+}
+```
+
+**110. How would you handle a situation where a background task needs to update the database, but the `DbContext` is scoped to the HTTP request?**
+* **Expected Answer**: You cannot inject a scoped `DbContext` directly into a singleton background service (`IHostedService`). You must inject `IServiceScopeFactory`, create a scope using `CreateScope()`, and resolve the `DbContext` from that new scope.
